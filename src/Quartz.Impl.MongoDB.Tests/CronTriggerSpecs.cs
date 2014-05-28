@@ -19,7 +19,7 @@ namespace Quartz.Impl.MongoDB.Tests
                     var tomorrow = new DateTime(2012, 12, 13, 5, 0, 0);
                     expectedNextFireTime = new DateTimeOffset(tomorrow, expectedTimeZone.GetUtcOffset(tomorrow));
 
-                    jobStore = new JobStore();
+                    jobStore = new JobStore { InstanceName = "test" };
                     jobStore.ClearAllSchedulingData();
 
                     trigger =
@@ -37,7 +37,7 @@ namespace Quartz.Impl.MongoDB.Tests
             private It should_still_be_configured_for_the_german_time_zone = () => retrievedCronTrigger.TimeZone.ShouldEqual(expectedTimeZone);
 
             private It should_schedule_the_trigger_next_time_on_5_o_clock_german_local_time = () =>
-                { 
+                {
                     retrievedCronTrigger.Triggered(null);
                     var nextFireTimeUtc = retrievedCronTrigger.GetNextFireTimeUtc();
                     nextFireTimeUtc.ShouldEqual(expectedNextFireTime);
