@@ -761,10 +761,10 @@ namespace Quartz.Impl.MongoDB
                                           bool updateTriggers)
         {
             CalendarWrapper calendarWrapper = new CalendarWrapper()
-            {
-                Name = name,
-                Calendar = calendar
-            };
+                {
+                    Name = name,
+                    Calendar = calendar
+                };
 
             if (this.Calendars.FindOneByIdAs<BsonDocument>(name) != null
                 && replaceExisting == false)
@@ -1369,10 +1369,16 @@ namespace Quartz.Impl.MongoDB
             var candidates = this.Triggers.FindAs<Spi.IOperableTrigger>(
                 Query.And(
                     Query.EQ("State", "Waiting"),
-                    Query.LTE("nextFireTimeUtc", (noLaterThan + timeWindow).UtcDateTime)))
-                .OrderBy(t => t.GetNextFireTimeUtc())
-                .ThenByDescending(t => t.Priority)
-                .ThenByDescending(t => t.Key)
+                    Query.LTE("nextFireTimeUtc", (noLaterThan + timeWindow).UtcDateTime))
+                )
+                .SetSortOrder(SortBy
+                    .Ascending("nextFireTimeUtc")
+                    .Descending("Priority")
+                    .Descending("Key")
+                )
+                //.OrderBy(t => t.GetNextFireTimeUtc())
+                //.ThenByDescending(t => t.Priority)
+                //.ThenByDescending(t => t.Key)
             ;
 
             foreach (IOperableTrigger trigger in candidates)
