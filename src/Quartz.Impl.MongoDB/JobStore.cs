@@ -846,6 +846,26 @@ namespace Quartz.Impl.MongoDB
         }
 
         /// <summary>
+        /// Determine whether a <see cref="ICalendar" /> with the given identifier already
+        /// exists within the scheduler.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <param name="calName">the identifier to check for</param>
+        /// <returns>true if a calendar exists with the given identifier</returns>
+        public virtual bool CalendarExists(string calName)
+        {
+            ICalendar calendar = RetrieveCalendar(calName);
+
+            if (calendar != null)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Get the number of <see cref="IJobDetail" /> s that are
         /// stored in the <see cref="IJobStore" />.
         /// </summary>
