@@ -362,7 +362,7 @@ namespace Quartz.Impl.MongoDB
         public virtual bool IsJobGroupPaused(string groupName)
         {
             var result = this.PausedJobGroups.FindOneByIdAs<BsonDocument>(groupName);
-            return !result.IsBsonNull;
+            return result != null && !result.IsBsonNull;
         }
 
         /// <summary>
@@ -373,7 +373,7 @@ namespace Quartz.Impl.MongoDB
         public virtual bool IsTriggerGroupPaused(string groupName)
         {
             var result = this.PausedTriggerGroups.FindOneByIdAs<BsonDocument>(groupName);
-            return !result.IsBsonNull;
+            return result != null && !result.IsBsonNull;
         }
 
         /// <summary>
