@@ -19,7 +19,10 @@ namespace Quartz.Impl.MongoDB.Tests
                     var tomorrow = new DateTime(2012, 12, 13, 5, 0, 0);
                     expectedNextFireTime = new DateTimeOffset(tomorrow, expectedTimeZone.GetUtcOffset(tomorrow));
 
-                    jobStore = new JobStore();
+                    jobStore = new JobStore
+                    {
+                        InstanceName = "CronTrigger"
+                    };
                     jobStore.ClearAllSchedulingData();
 
                     trigger =
