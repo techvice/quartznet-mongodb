@@ -362,7 +362,7 @@ namespace Quartz.Impl.MongoDB
         public virtual bool IsJobGroupPaused(string groupName)
         {
             var result = this.PausedJobGroups.FindOneByIdAs<BsonDocument>(groupName);
-            return !result.IsBsonNull;
+            return result != null && !result.IsBsonNull;
         }
 
         /// <summary>
@@ -373,7 +373,7 @@ namespace Quartz.Impl.MongoDB
         public virtual bool IsTriggerGroupPaused(string groupName)
         {
             var result = this.PausedTriggerGroups.FindOneByIdAs<BsonDocument>(groupName);
-            return !result.IsBsonNull;
+            return result != null && !result.IsBsonNull;
         }
 
         /// <summary>
@@ -826,6 +826,20 @@ namespace Quartz.Impl.MongoDB
                         this.Triggers.Save(trigger);
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Determine whether a <see cref="ICalendar" /> with the given identifier already 
+        /// exists within the scheduler.
+        /// </summary>
+        /// <param name="calName">calName the identifier to check for</param>
+        /// <returns>true if a Calendar exists with the given identifier</returns>
+        public bool CalendarExists(string calName)
+        {
+            lock (lockObject)
+            {
+                return this.Calendars.FindOneByIdAs<BsonDocument>(calName) != null;
             }
         }
 
