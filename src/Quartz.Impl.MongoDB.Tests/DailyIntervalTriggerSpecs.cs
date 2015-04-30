@@ -21,7 +21,10 @@ namespace Quartz.Impl.MongoDB.Tests
                     var tomorrow = new DateTime(2012, 12, 14, 10, 10, 0);
                     expectedNextFireTime = new DateTimeOffset(tomorrow, germanTimeZone.GetUtcOffset(tomorrow));
 
-                    jobStore = new JobStore();
+                    jobStore = new JobStore()
+                    {
+                        InstanceName = "test"
+                    };
                     jobStore.ClearAllSchedulingData();
 
                     trigger = TriggerBuilder.Create()
