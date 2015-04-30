@@ -805,20 +805,6 @@ namespace Quartz.Impl.MongoDB
         }
 
         /// <summary>
-        /// Determine whether a <see cref="ICalendar" /> with the given identifier already 
-        /// exists within the scheduler.
-        /// </summary>
-        /// <param name="calName">calName the identifier to check for</param>
-        /// <returns>true if a Calendar exists with the given identifier</returns>
-        public bool CalendarExists(string calName)
-        {
-            lock (lockObject)
-            {
-                return this.Calendars.FindOneByIdAs<BsonDocument>(calName) != null;
-            }
-        }
-
-        /// <summary>
         /// Remove (delete) the <see cref="ICalendar" /> with the
         /// given name.
         /// <para>
