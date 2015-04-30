@@ -1,5 +1,4 @@
 ﻿using System;
-
 using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization;
 
@@ -23,15 +22,15 @@ namespace Quartz.Impl.MongoDB
             return TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
         }
 
-        public IBsonSerializationOptions GetDefaultSerializationOptions()
-        {
-            return null;
-        }
-
         public void Serialize(BsonWriter bsonWriter, Type nominalType, object value, IBsonSerializationOptions options)
         {
             var timeZoneInfo = (TimeZoneInfo)value;
             bsonWriter.WriteString(timeZoneInfo.Id);
         }
+
+		public IBsonSerializationOptions GetDefaultSerializationOptions()
+		{
+			return null;
+		}
     }
 }

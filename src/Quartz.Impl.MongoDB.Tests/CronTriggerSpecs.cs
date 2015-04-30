@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq;
-
 using Machine.Specifications;
-
 using Quartz.Impl.Triggers;
 using Quartz.Spi;
 

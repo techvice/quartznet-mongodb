@@ -1,11 +1,7 @@
 ﻿using System;
-
 using Machine.Specifications;
-
 using Quartz.Impl.Triggers;
-
 using System.Linq;
-
 using Quartz.Spi;
 
 namespace Quartz.Impl.MongoDB.Tests

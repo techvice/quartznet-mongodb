@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-
 using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization;
 
@@ -8,11 +7,11 @@ namespace Quartz.Impl.MongoDB
 {
     public class SetSerializer<T> : IBsonSerializer
     {
-        private IBsonSerializer enumerableSerializer;
+        private readonly IBsonSerializer _enumerableSerializer;
 
         public SetSerializer()
         {
-            enumerableSerializer = BsonSerializer.LookupSerializer(typeof(IEnumerable<T>));
+            _enumerableSerializer = BsonSerializer.LookupSerializer(typeof(IEnumerable<T>));
         }
 
         public object Deserialize(BsonReader bsonReader, Type nominalType, IBsonSerializationOptions options)
@@ -27,19 +26,19 @@ namespace Quartz.Impl.MongoDB
 
         private object Deserialize(BsonReader bsonReader, IBsonSerializationOptions options)
         {
-            var enumerable = (IEnumerable<T>)enumerableSerializer.Deserialize(bsonReader, typeof(ISet<T>), typeof(HashSet<T>), options);
-            return new Quartz.Collection.HashSet<T>(enumerable);
+            var enumerable = (IEnumerable<T>)_enumerableSerializer.Deserialize(bsonReader, typeof(ISet<T>), typeof(HashSet<T>), options);
+            return new Collection.HashSet<T>(enumerable);
         }
 
         public IBsonSerializationOptions GetDefaultSerializationOptions()
         {
-            return enumerableSerializer.GetDefaultSerializationOptions();
+            return _enumerableSerializer.GetDefaultSerializationOptions();
         }
 
         public void Serialize(BsonWriter bsonWriter, Type nominalType, object value, IBsonSerializationOptions options)
         {
             var hashSet = (Collection.HashSet<T>)value;
-            enumerableSerializer.Serialize(bsonWriter, typeof(ISet<T>), new HashSet<T>(hashSet), options);
+            _enumerableSerializer.Serialize(bsonWriter, typeof(ISet<T>), new HashSet<T>(hashSet), options);
         }
     }
 }

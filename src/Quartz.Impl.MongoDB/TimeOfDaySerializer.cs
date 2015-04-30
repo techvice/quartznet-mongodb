@@ -1,5 +1,4 @@
 ﻿using System;
-
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization;
@@ -39,11 +38,6 @@ namespace Quartz.Impl.MongoDB
             }
         }
 
-        public IBsonSerializationOptions GetDefaultSerializationOptions()
-        {
-            return new DocumentSerializationOptions();
-        }
-
         public void Serialize(BsonWriter bsonWriter, Type nominalType, object value, IBsonSerializationOptions options)
         {
             var timeOfDay = (TimeOfDay)value;
@@ -53,5 +47,10 @@ namespace Quartz.Impl.MongoDB
             bsonWriter.WriteInt32("Second", timeOfDay.Second);
             bsonWriter.WriteEndDocument();
         }
+
+		public IBsonSerializationOptions GetDefaultSerializationOptions()
+		{
+			return new DocumentSerializationOptions();
+		}
     }
 }

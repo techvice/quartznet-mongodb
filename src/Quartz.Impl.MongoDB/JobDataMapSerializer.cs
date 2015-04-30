@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson;
 
@@ -11,69 +8,49 @@ namespace Quartz.Impl.MongoDB
     {
         public object Deserialize(global::MongoDB.Bson.IO.BsonReader bsonReader, Type nominalType, Type actualType, IBsonSerializationOptions options)
         {
+	        string message;
             if (nominalType != typeof(JobDataMap) || actualType != typeof(JobDataMap))
             {
-                var message = string.Format("Can't deserialize a {0} with {1}.", nominalType.FullName, this.GetType().Name);
+                message = string.Format("Can't deserialize a {0} with {1}.", nominalType.FullName, GetType().Name);
                 throw new BsonSerializationException(message);
             }
 
             var bsonType = bsonReader.CurrentBsonType;
-            if (bsonType == BsonType.Document)
+            switch (bsonType)
             {
-                JobDataMap item = new JobDataMap();
-                bsonReader.ReadStartDocument();
+	            case BsonType.Document:
+		            var item = new JobDataMap();
+		            bsonReader.ReadStartDocument();
 
-                while (bsonReader.ReadBsonType() != BsonType.EndOfDocument)
-                {
-                    string key = bsonReader.ReadName();
-                    object value = BsonSerializer.Deserialize<object>(bsonReader);
-                    item.Add(key, value);
-                }
+		            while (bsonReader.ReadBsonType() != BsonType.EndOfDocument)
+		            {
+			            string key = bsonReader.ReadName();
+			            var value = BsonSerializer.Deserialize<object>(bsonReader);
+			            item.Add(key, value);
+		            }
 
-                bsonReader.ReadEndDocument();
+		            bsonReader.ReadEndDocument();
 
-                return item;
-            }
-            else if (bsonType == BsonType.Null)
-            {
-                bsonReader.ReadNull();
-                return null;
-            }
-            else
-            {
-                var message = string.Format("Can't deserialize a {0} from BsonType {1}.", nominalType.FullName, bsonType);
-                throw new BsonSerializationException(message);
+		            return item;
+
+				case BsonType.Null:
+					bsonReader.ReadNull();
+					return null;
+
+				default:
+					message = string.Format("Can't deserialize a {0} from BsonType {1}.", nominalType.FullName, bsonType);
+					throw new BsonSerializationException(message);
             }
         }
 
         public object Deserialize(global::MongoDB.Bson.IO.BsonReader bsonReader, Type nominalType, IBsonSerializationOptions options)
         {
-            return this.Deserialize(bsonReader, nominalType, nominalType, options);
-        }
-
-        public IBsonSerializationOptions GetDefaultSerializationOptions()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool GetDocumentId(object document, out object id, out Type idNominalType, out IIdGenerator idGenerator)
-        {
-            throw new NotImplementedException();
-        }
-
-        public BsonSerializationInfo GetItemSerializationInfo()
-        {
-            throw new NotImplementedException();
-        }
-
-        public BsonSerializationInfo GetMemberSerializationInfo(string memberName)
-        {
-            throw new NotImplementedException();
+            return Deserialize(bsonReader, nominalType, nominalType, options);
         }
 
         public void Serialize(global::MongoDB.Bson.IO.BsonWriter bsonWriter, Type nominalType, object value, IBsonSerializationOptions options)
         {
-            JobDataMap item = (JobDataMap)value;
+            var item = (JobDataMap)value;
             bsonWriter.WriteStartDocument();
 
             foreach (string key in item.Keys)
@@ -85,9 +62,9 @@ namespace Quartz.Impl.MongoDB
             bsonWriter.WriteEndDocument();
         }
 
-        public void SetDocumentId(object document, object id)
-        {
-            throw new NotImplementedException();
-        }
+		public IBsonSerializationOptions GetDefaultSerializationOptions()
+		{
+			throw new NotImplementedException();
+		}
     }
 }

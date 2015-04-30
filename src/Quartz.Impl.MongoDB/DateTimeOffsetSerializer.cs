@@ -1,8 +1,4 @@
 ﻿﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Options;
@@ -17,9 +13,6 @@ namespace Quartz.Impl.MongoDB
     /// </summary>
     public class DateTimeOffsetSerializer : BsonBaseSerializer
     {
-        // private static fields
-        private static DateTimeOffsetSerializer __instance = new DateTimeOffsetSerializer();
-
         // constructors
         /// <summary>
         /// Initializes a new instance of the DateTimeSerializer class.
@@ -29,14 +22,16 @@ namespace Quartz.Impl.MongoDB
         {
         }
 
-        // public static properties
-        /// <summary>
-        /// Gets an instance of the DateTimeSerializer class.
-        /// </summary>
-        public static DateTimeOffsetSerializer Instance
-        {
-            get { return __instance; }
-        }
+	    static DateTimeOffsetSerializer()
+	    {
+			Instance = new DateTimeOffsetSerializer();
+	    }
+
+		/// <summary>
+		/// Gets an instance of the DateTimeSerializer class.
+		/// </summary>
+		public static DateTimeOffsetSerializer Instance { get; private set; }
+
 
         // public methods
         /// <summary>
@@ -81,7 +76,7 @@ namespace Quartz.Impl.MongoDB
                     }
                     else
                     {
-                        var formats = new string[] { "yyyy-MM-ddK", "yyyy-MM-ddTHH:mm:ssK", "yyyy-MM-ddTHH:mm:ss.FFFFFFFK" };
+                        var formats = new[] { "yyyy-MM-ddK", "yyyy-MM-ddTHH:mm:ssK", "yyyy-MM-ddTHH:mm:ss.FFFFFFFK" };
                         value = DateTime.ParseExact(bsonReader.ReadString(), formats, null, DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal);
                     }
                     break;
@@ -109,8 +104,7 @@ namespace Quartz.Impl.MongoDB
             var dateTime = (DateTimeOffset)value;
             var dateTimeSerializationOptions = EnsureSerializationOptions<DateTimeSerializationOptions>(options);
 
-            DateTime utcDateTime;
-            utcDateTime = BsonUtils.ToUniversalTime(dateTime.UtcDateTime);
+	        DateTime utcDateTime = BsonUtils.ToUniversalTime(dateTime.UtcDateTime);
             var millisecondsSinceEpoch = BsonUtils.ToMillisecondsSinceEpoch(utcDateTime);
 
             switch (dateTimeSerializationOptions.Representation)
